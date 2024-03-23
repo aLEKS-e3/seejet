@@ -25,7 +25,7 @@ class City(models.Model):
         verbose_name_plural = "cities"
 
     def __str__(self):
-        return f"{self.name}, {self.country}"
+        return self.name
 
 
 class Airport(models.Model):
@@ -37,7 +37,7 @@ class Airport(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name}, {self.closest_big_city}"
+        return self.name
 
 
 class Route(models.Model):
@@ -77,7 +77,7 @@ class AirplaneType(models.Model):
 
 
 class Airplane(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, unique=True)
     rows = models.IntegerField()
     seats_in_row = models.IntegerField()
     type = models.ForeignKey(
@@ -87,7 +87,7 @@ class Airplane(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name} ({self.type})"
+        return {self.name}
 
 
 class Crew(models.Model):
@@ -114,7 +114,8 @@ class Flight(models.Model):
 
     def __str__(self):
         return (f"{self.route} --> {self.airplane} "
-                f"(dep: {self.departure_time}), arr: {self.arrival_time}")
+                f"(dep: {self.departure_time}), "
+                f"arr: {self.arrival_time}")
 
 
 class Ticket(models.Model):

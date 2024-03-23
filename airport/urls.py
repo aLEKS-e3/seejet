@@ -9,5 +9,6 @@ router = routers.DefaultRouter()
 router.register("airports", views.AirportViewSet)
 router.register("cities", views.CityViewSet)
 router.register("countries", views.CountryViewSet)
+router.register("routes", views.RouteViewSet)
 
 urlpatterns = router.urls

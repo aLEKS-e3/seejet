@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from airport.models import Country, City, Airport
+from airport.models import Country, City, Airport, Route
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -24,5 +24,13 @@ class AirportSerializer(serializers.ModelSerializer):
         fields = ("name", "closest_big_city",)
 
 
-class AirportListSerializer(AirportSerializer):
-    closest_big_city = serializers.StringRelatedField()
+class RouteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Route
+        fields = ("source", "destination", "distance",)
+
+
+class RouteListSerializer(RouteSerializer):
+    source = serializers.StringRelatedField()
+    destination = serializers.StringRelatedField()

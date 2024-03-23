@@ -1,13 +1,14 @@
 from rest_framework import viewsets, mixins
 from rest_framework.viewsets import GenericViewSet
 
-from airport.models import Country, City, Airport
+from airport.models import Country, City, Airport, Route
 from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
 from airport.serializers import (
     CountrySerializer,
     CitySerializer,
     AirportSerializer,
-    AirportListSerializer
+    RouteSerializer,
+    RouteListSerializer
 )
 
 
@@ -36,11 +37,21 @@ class AirportViewSet(
     mixins.CreateModelMixin,
     GenericViewSet
 ):
-    queryset = Airport.objects.select_related("closest_big_city__country")
+    queryset = Airport.objects.select_related("closest_big_city")
     serializer_class = AirportSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+
+class RouteViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
+    queryset = Route.objects.select_related()
+    serializer_class = RouteSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return AirportListSerializer
-        return AirportSerializer
+            return RouteListSerializer
+        return RouteSerializer
