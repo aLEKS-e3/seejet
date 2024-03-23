@@ -18,11 +18,11 @@ class CitySerializer(serializers.ModelSerializer):
 
 
 class AirportSerializer(serializers.ModelSerializer):
-    closest_big_city = serializers.StringRelatedField()
 
     class Meta:
         model = Airport
-        fields = "__all__"
+        fields = ("name", "closest_big_city",)
 
 
-
+class AirportListSerializer(AirportSerializer):
+    closest_big_city = serializers.StringRelatedField()

@@ -6,7 +6,8 @@ from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
 from airport.serializers import (
     CountrySerializer,
     CitySerializer,
-    AirportSerializer
+    AirportSerializer,
+    AirportListSerializer
 )
 
 
@@ -30,7 +31,16 @@ class CityViewSet(
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
-class AirportViewSet(viewsets.ModelViewSet):
+class AirportViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
     queryset = Airport.objects.select_related("closest_big_city__country")
     serializer_class = AirportSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return AirportListSerializer
+        return AirportSerializer

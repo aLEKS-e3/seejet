@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from airport import models
+
+admin.site.register(models.Airport)
+admin.site.register(models.Country)
+admin.site.register(models.City)
