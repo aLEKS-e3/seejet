@@ -86,6 +86,10 @@ class Airplane(models.Model):
         related_name="airplanes"
     )
 
+    @property
+    def total_seats(self):
+        return self.rows * self.seats_in_row
+
     def __str__(self):
         return {self.name}
 

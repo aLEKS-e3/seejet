@@ -1,15 +1,16 @@
 from rest_framework import viewsets, mixins
 from rest_framework.viewsets import GenericViewSet
 
-from airport.models import Country, City, Airport, Route
-from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
-from airport.serializers import (
-    CountrySerializer,
-    CitySerializer,
-    AirportSerializer,
-    RouteSerializer,
-    RouteListSerializer
+from airport.models import (
+    Country,
+    City,
+    Airport,
+    Route,
+    AirplaneType,
+    Airplane, Crew
 )
+from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
+from airport import serializers
 
 
 class CountryViewSet(
@@ -18,7 +19,7 @@ class CountryViewSet(
     GenericViewSet
 ):
     queryset = Country.objects.all()
-    serializer_class = CountrySerializer
+    serializer_class = serializers.CountrySerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
@@ -28,7 +29,7 @@ class CityViewSet(
     GenericViewSet
 ):
     queryset = City.objects.select_related("country")
-    serializer_class = CitySerializer
+    serializer_class = serializers.CitySerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
@@ -38,7 +39,7 @@ class AirportViewSet(
     GenericViewSet
 ):
     queryset = Airport.objects.select_related("closest_big_city")
-    serializer_class = AirportSerializer
+    serializer_class = serializers.AirportSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
@@ -48,10 +49,37 @@ class RouteViewSet(
     GenericViewSet
 ):
     queryset = Route.objects.select_related()
-    serializer_class = RouteSerializer
+    serializer_class = serializers.RouteSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return RouteListSerializer
-        return RouteSerializer
+            return serializers.RouteListSerializer
+        return serializers.RouteSerializer
+
+
+class AirplaneTypeViewSet(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    GenericViewSet
+):
+    queryset = AirplaneType.objects.all()
+    serializer_class = serializers.AirplaneTypeSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+
+class AirplaneViewSet(viewsets.ModelViewSet):
+    queryset = Airplane.objects.select_related("type")
+    serializer_class = serializers.AirplaneSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return serializers.AirplaneListSerializer
+        return serializers.AirplaneSerializer
+
+
+class CrewViewSet(viewsets.ModelViewSet):
+    queryset = Crew.objects.all()
+    serializer_class = serializers.CrewSerializer
+    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
