@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from airport.models import Order, Ticket
-from airport.serializers.flight_related_serializers import FlightListSerializer
+# from airport.serializers.flight_related_serializers import FlightListSerializer
 
 
 class TicketSerializer(serializers.ModelSerializer):
@@ -23,8 +23,8 @@ class TicketSerializer(serializers.ModelSerializer):
 
 
 class TicketListSerializer(TicketSerializer):
-    flight = FlightListSerializer(read_only=True)
-
+    # flight = FlightListSerializer(read_only=True)
+    pass
 
 class TicketSeatsSerializer(TicketSerializer):
 
