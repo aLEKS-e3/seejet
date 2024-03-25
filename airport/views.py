@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
@@ -14,7 +15,30 @@ from airport.models import (
     Order
 )
 from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
-from airport import serializers
+from airport.serializers.location_related_serializers import (
+    CitySerializer,
+    CountrySerializer
+)
+from airport.serializers.airplane_related_serializers import (
+    AirplaneListSerializer,
+    AirplaneSerializer,
+    AirplaneTypeSerializer
+)
+from airport.serializers.flight_related_serializers import (
+    FlightSerializer,
+    FlightListSerializer,
+    FlightDetailSerializer,
+    CrewSerializer,
+)
+from airport.serializers.airport_related_serializers import (
+    AirportSerializer,
+    RouteListSerializer,
+    RouteSerializer
+)
+from airport.serializers.order_related_serializers import (
+    OrderSerializer,
+    OrderDetailSerializer
+)
 
 
 class CountryViewSet(
@@ -23,7 +47,7 @@ class CountryViewSet(
     GenericViewSet
 ):
     queryset = Country.objects.all()
-    serializer_class = serializers.CountrySerializer
+    serializer_class = CountrySerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
@@ -33,7 +57,7 @@ class CityViewSet(
     GenericViewSet
 ):
     queryset = City.objects.select_related("country")
-    serializer_class = serializers.CitySerializer
+    serializer_class = CitySerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
@@ -43,7 +67,7 @@ class AirportViewSet(
     GenericViewSet
 ):
     queryset = Airport.objects.select_related("closest_big_city")
-    serializer_class = serializers.AirportSerializer
+    serializer_class = AirportSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
@@ -53,13 +77,13 @@ class RouteViewSet(
     GenericViewSet
 ):
     queryset = Route.objects.select_related()
-    serializer_class = serializers.RouteSerializer
+    serializer_class = RouteSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return serializers.RouteListSerializer
-        return serializers.RouteSerializer
+            return RouteListSerializer
+        return self.serializer_class
 
 
 class AirplaneTypeViewSet(
@@ -68,40 +92,84 @@ class AirplaneTypeViewSet(
     GenericViewSet
 ):
     queryset = AirplaneType.objects.all()
-    serializer_class = serializers.AirplaneTypeSerializer
+    serializer_class = AirplaneTypeSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.select_related("type")
-    serializer_class = serializers.AirplaneSerializer
+    serializer_class = AirplaneSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return serializers.AirplaneListSerializer
-        return serializers.AirplaneSerializer
+            return AirplaneListSerializer
+        return self.serializer_class
 
 
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
-    serializer_class = serializers.CrewSerializer
+    serializer_class = CrewSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.select_related().prefetch_related("crew")
-    serializer_class = serializers.FlightSerializer
+    serializer_class = FlightSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
-            return serializers.FlightListSerializer
+            return FlightListSerializer
 
         if self.action == "retrieve":
-            return serializers.FlightDetailSerializer
+            return FlightDetailSerializer
 
-        return serializers.FlightSerializer
+        return self.serializer_class
+
+    def get_queryset(self):
+        source = self.request.query_params.get("from")
+        destination = self.request.query_params.get("to")
+        airplane = self.request.query_params.get("airplane")
+
+        queryset = self.queryset
+
+        if source:
+            queryset = queryset.filter(route__source__icontains=source)
+
+        if destination:
+            queryset = queryset.filter(
+                route__destination__icontains=destination
+            )
+
+        if airplane:
+            queryset = queryset.filter(airplane__name__icontains=airplane)
+
+        return queryset.distinct()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type={"type": "list", "items": {"type": "string"}},
+                description="Filter flights by source (eg. ?from=Paris)"
+            ),
+            OpenApiParameter(
+                "destination",
+                type={"type": "list", "items": {"type": "string"}},
+                description="Filter flights by destination (eg. ?to=Tokyo)"
+            ),
+            OpenApiParameter(
+                "airplane",
+                type={"type": "list", "items": {"type": "string"}},
+                description=(
+                    "Filter flights by airplane (eg. ?airplane=Airbus)"
+                )
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class OrderViewSet(
@@ -110,11 +178,16 @@ class OrderViewSet(
     GenericViewSet,
 ):
     queryset = Order.objects.all()
-    serializer_class = serializers.OrderSerializer
+    serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return OrderDetailSerializer
+        return self.serializer_class
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

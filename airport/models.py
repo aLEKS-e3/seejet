@@ -117,7 +117,7 @@ class Flight(models.Model):
         default_related_name = "flights"
 
     def __str__(self):
-        return (f"{self.route} --> {self.airplane} "
+        return (f"{self.route} "
                 f"(dep: {self.departure_time}), "
                 f"arr: {self.arrival_time}")
 
