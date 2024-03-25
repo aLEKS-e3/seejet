@@ -1,4 +1,4 @@
-import pathlib
+import os
 import uuid
 
 from django.core.exceptions import ValidationError
@@ -99,11 +99,10 @@ class Airplane(models.Model):
 
 
 def crew_image_path(instance, filename):
-    filename = (
-        f"{slugify(instance.full_name)}-{uuid.uuid4()}"
-        + pathlib.Path(filename).suffix
-    )
-    return pathlib.Path("upload/crew/") / pathlib.Path(filename)
+    _, extension = os.path.splitext(filename)
+    filename = f"{slugify(instance.title)}-{uuid.uuid4()}{extension}"
+
+    return os.path.join("uploads/crew/", filename)
 
 
 class Crew(models.Model):

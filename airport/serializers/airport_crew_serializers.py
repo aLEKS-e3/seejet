@@ -10,6 +10,13 @@ class CrewSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CrewImageSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Crew
+        fields = ("id", "portrait",)
+
+
 class AirportSerializer(serializers.ModelSerializer):
 
     class Meta:
