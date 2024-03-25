@@ -1,6 +1,7 @@
 from django.db.models import F, Count
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
@@ -16,27 +17,27 @@ from airport.models import (
     Order
 )
 from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
-from airport.serializers.location_related_serializers import (
+from airport.serializers.location_serializers import (
     CitySerializer,
     CountrySerializer
 )
-from airport.serializers.airplane_related_serializers import (
+from airport.serializers.airplane_serializers import (
     AirplaneListSerializer,
     AirplaneSerializer,
     AirplaneTypeSerializer
 )
-from airport.serializers.flight_related_serializers import (
+from airport.serializers.flight_ticket_serializers import (
     FlightSerializer,
     FlightListSerializer,
     FlightDetailSerializer,
     CrewSerializer,
 )
-from airport.serializers.airport_related_serializers import (
+from airport.serializers.airport_serializers import (
     AirportSerializer,
     RouteListSerializer,
     RouteSerializer
 )
-from airport.serializers.order_related_serializers import (
+from airport.serializers.order_serializers import (
     OrderSerializer,
     OrderDetailSerializer
 )
@@ -180,14 +181,21 @@ class FlightViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
+class OrderPagination(PageNumberPagination):
+    page_size = 10
+    max_page_size = 100
+
+
 class OrderViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
     GenericViewSet,
 ):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = OrderPagination
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
