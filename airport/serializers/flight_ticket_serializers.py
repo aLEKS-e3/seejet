@@ -1,9 +1,9 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 
-from airport.models import Crew, Flight
-from airport.serializers.airplane_related_serializers import AirplaneListSerializer
-from airport.serializers.airport_related_serializers import RouteListSerializer
-from airport.serializers.order_related_serializers import TicketSeatsSerializer
+from airport.models import Crew, Flight, Ticket
+from airport.serializers.airplane_serializers import AirplaneListSerializer
+from airport.serializers.airport_serializers import RouteListSerializer
 
 
 class CrewSerializer(serializers.ModelSerializer):
@@ -37,6 +37,34 @@ class FlightListSerializer(serializers.ModelSerializer):
             "crew",
             "tickets_available"
         )
+
+
+class TicketSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Ticket
+        fields = ("row", "seat", "flight",)
+
+    def validate(self, attrs):
+        data = super(TicketSerializer, self).validate(attrs=attrs)
+        Ticket.validate_ticket(
+            attrs["row"],
+            attrs["seat"],
+            attrs["flight"].airplane,
+            ValidationError
+        )
+        return data
+
+
+class TicketSeatsSerializer(TicketSerializer):
+
+    class Meta:
+        model = Ticket
+        fields = ("row", "seat",)
+
+
+class TicketListSerializer(TicketSerializer):
+    flight = FlightListSerializer(read_only=True)
 
 
 class FlightDetailSerializer(FlightSerializer):
