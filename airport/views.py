@@ -128,7 +128,7 @@ class CrewViewSet(viewsets.ModelViewSet):
         permission_classes=[IsAdminUser],
     )
     def upload_image(self, request, pk=None):
-        """Endpoint for uploading image to specific movie"""
+        """Endpoint for uploading image to specific crew member"""
         movie = self.get_object()
         serializer = self.get_serializer(movie, data=request.data)
 
