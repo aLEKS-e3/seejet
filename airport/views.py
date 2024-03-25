@@ -30,12 +30,12 @@ from airport.serializers.flight_ticket_serializers import (
     FlightSerializer,
     FlightListSerializer,
     FlightDetailSerializer,
-    CrewSerializer,
 )
-from airport.serializers.airport_serializers import (
+from airport.serializers.airport_crew_serializers import (
     AirportSerializer,
     RouteListSerializer,
-    RouteSerializer
+    RouteSerializer,
+    CrewSerializer
 )
 from airport.serializers.order_serializers import (
     OrderSerializer,

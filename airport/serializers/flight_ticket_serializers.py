@@ -1,16 +1,9 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from airport.models import Crew, Flight, Ticket
+from airport.models import Flight, Ticket
 from airport.serializers.airplane_serializers import AirplaneListSerializer
-from airport.serializers.airport_serializers import RouteListSerializer
-
-
-class CrewSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Crew
-        fields = ("first_name", "last_name", "full_name",)
+from airport.serializers.airport_crew_serializers import RouteListSerializer
 
 
 class FlightSerializer(serializers.ModelSerializer):

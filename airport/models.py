@@ -1,6 +1,10 @@
+import pathlib
+import uuid
+
 from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 
 
 class Country(models.Model):
@@ -94,9 +98,18 @@ class Airplane(models.Model):
         return self.name
 
 
+def crew_image_path(instance, filename):
+    filename = (
+        f"{slugify(instance.full_name)}-{uuid.uuid4()}"
+        + pathlib.Path(filename).suffix
+    )
+    return pathlib.Path("upload/crew/") / pathlib.Path(filename)
+
+
 class Crew(models.Model):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+    portrait = models.ImageField(null=True, upload_to=crew_image_path)
 
     @property
     def full_name(self):
