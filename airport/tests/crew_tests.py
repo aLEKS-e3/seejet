@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from airport.models import Crew
-from airport.serializers.airport_crew_serializers import CrewSerializer
+from airport.serializers.airport_serializers import CrewSerializer
 from airport.tests.samples_for_tests import sample_crew
 
 CREW_URL = reverse("airport:crew-list")
