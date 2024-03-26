@@ -3,17 +3,17 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
-from .samples_for_tests import (
+from airport.tests.samples_for_tests import (
     sample_main_flight,
     sample_secondary_flight,
     sample_route,
     sample_airplane
 )
-from ..serializers.flight_ticket_serializers import (
+from airport.serializers.flight_ticket_serializers import (
     FlightListSerializer,
     FlightDetailSerializer
 )
-from ..views import FlightViewSet
+from airport.views import FlightViewSet
 
 FLIGHT_URL = reverse("airport:flight-list")
 
