@@ -22,7 +22,7 @@ def detail_url(flight_id):
     return reverse("airport:flight-detail", args=[flight_id])
 
 
-class UnauthenticatedMovieApiTests(APITestCase):
+class UnauthenticatedFlightApiTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
 
@@ -31,11 +31,11 @@ class UnauthenticatedMovieApiTests(APITestCase):
         self.assertNotEqual(response.status_code, status.HTTP_200_OK)  # TODO: check 401 after token set up
 
 
-class AuthenticatedMovieApiTests(APITestCase):
+class AuthenticatedFlightApiTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            email="ceo@ohyes.com",
+            email="ceo@oes.com",
             password="1_am_CE0_1"
         )
         self.client.force_authenticate(self.user)

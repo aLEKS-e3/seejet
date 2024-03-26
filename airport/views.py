@@ -130,8 +130,8 @@ class CrewViewSet(viewsets.ModelViewSet):
     )
     def upload_image(self, request, pk=None):
         """Endpoint for uploading image to specific crew member"""
-        movie = self.get_object()
-        serializer = self.get_serializer(movie, data=request.data)
+        crew = self.get_object()
+        serializer = self.get_serializer(crew, data=request.data)
 
         if serializer.is_valid():
             serializer.save()
