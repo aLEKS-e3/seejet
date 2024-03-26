@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from airport.models import Crew
-from airport.serializers.airport_serializers import CrewSerializer
+from airport.serializers.crew_serializers import CrewSerializer
 from airport.tests.samples_for_tests import sample_crew
 
 CREW_URL = reverse("airport:crew-list")
@@ -24,7 +24,7 @@ class UnauthenticatedCrewApiTests(APITestCase):
 
     def test_crew_list_auth_required(self):
         response = self.client.get(CREW_URL)
-        self.assertNotEqual(response.status_code, status.HTTP_200_OK)  # TODO: test 403 after token setup
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class AuthenticatedCrewApiTests(APITestCase):

@@ -16,7 +16,7 @@ class UnauthenticatedAirportApiTests(APITestCase):
 
     def test_airport_list_auth_required(self):
         response = self.client.get(AIRPORT_URL)
-        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class AuthenticatedAirportApiTests(APITestCase):

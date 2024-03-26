@@ -17,11 +17,11 @@ class UnauthenticatedLocationApiTests(APITestCase):
 
     def test_city_list_auth_required(self):
         response = self.client.get(CITY_URL)
-        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_country_list_auth_required(self):
         response = self.client.get(COUNTRY_URL)
-        self.assertNotEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class AuthenticatedLocationApiTests(APITestCase):

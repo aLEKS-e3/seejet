@@ -28,7 +28,7 @@ class UnauthenticatedFlightApiTests(APITestCase):
 
     def test_flight_list_auth_required(self):
         response = self.client.get(FLIGHT_URL)
-        self.assertNotEqual(response.status_code, status.HTTP_200_OK)  # TODO: check 401 after token set up
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
 class AuthenticatedFlightApiTests(APITestCase):
