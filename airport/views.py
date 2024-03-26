@@ -37,7 +37,8 @@ from airport.serializers.airport_crew_serializers import (
     AirportSerializer,
     RouteListSerializer,
     RouteSerializer,
-    CrewSerializer, CrewImageSerializer
+    CrewSerializer,
+    CrewImageSerializer
 )
 from airport.serializers.order_serializers import (
     OrderSerializer,
@@ -168,11 +169,11 @@ class FlightViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
 
         if source:
-            queryset = queryset.filter(route__source__icontains=source)
+            queryset = queryset.filter(route__source__name__icontains=source)
 
         if destination:
             queryset = queryset.filter(
-                route__destination__icontains=destination
+                route__destination__name__icontains=destination
             )
 
         if airplane:
