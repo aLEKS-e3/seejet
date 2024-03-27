@@ -52,6 +52,10 @@ class AuthenticatedFlightApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(serializer.data, response.data)
 
+    def test_flight_list_tickets_available_field(self):
+        response = self.client.get(FLIGHT_URL)
+        self.assertIn("tickets_available", response.data[0].keys())
+
     def test_flight_filter_by_source(self):
         response = self.client.get(FLIGHT_URL, {"from": "Airport"})
 
@@ -86,6 +90,10 @@ class AuthenticatedFlightApiTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
+
+    def test_flight_detail_taken_places_field(self):
+        response = self.client.get(detail_url(1))
+        self.assertIn("taken_places", response.data.keys())
 
     def test_create_flight_is_forbidden(self):
         payload = {
