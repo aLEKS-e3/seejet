@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase, APIClient
 
 from airport.models import Airport
 from airport.serializers.airport_serializers import AirportSerializer
-from airport.tests.samples_for_tests import sample_airport, sample_city
+from airport.tests.samples_for_tests import sample_airport
 
 AIRPORT_URL = reverse("airport:airport-list")
 

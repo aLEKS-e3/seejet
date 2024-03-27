@@ -3,7 +3,6 @@ from rest_framework.exceptions import ValidationError
 
 from airport.models import Flight, Ticket
 from airport.serializers.airplane_serializers import AirplaneListSerializer
-from airport.serializers.crew_serializers import CrewSerializer
 from airport.serializers.route_serializers import RouteListSerializer
 
 

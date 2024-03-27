@@ -57,14 +57,23 @@ class AuthorizedOrderApiTests(APITestCase):
             "created_at": "1999-05-13 10:00"
         }
         response = self.client.put(detail_url(self.order.id), payload)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
         response = self.client.patch(detail_url(self.order.id), payload)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
     def test_delete_order_is_forbidden(self):
         response = self.client.delete(detail_url(self.order.id))
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_405_METHOD_NOT_ALLOWED
+        )
 
     def test_create_ticket_success(self):
         flight = sample_main_flight()

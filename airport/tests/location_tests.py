@@ -4,7 +4,10 @@ from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 
 from airport.models import Country, City
-from airport.serializers.location_serializers import CitySerializer, CountrySerializer
+from airport.serializers.location_serializers import (
+    CitySerializer,
+    CountrySerializer
+)
 from airport.tests.samples_for_tests import sample_city
 
 CITY_URL = reverse("airport:city-list")
