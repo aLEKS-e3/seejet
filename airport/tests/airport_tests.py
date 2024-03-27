@@ -41,7 +41,6 @@ class AuthenticatedAirportApiTests(APITestCase):
     def test_create_airport_is_forbidden(self):
         payload = {
             "name": "OdesaMama",
-            "closest_big_city": sample_city()
         }
         response = self.client.post(AIRPORT_URL, payload)
 
