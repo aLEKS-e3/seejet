@@ -47,6 +47,11 @@ class CityViewSet(
     serializer_class = location_serializers.CitySerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return location_serializers.CityListSerializer
+        return self.serializer_class
+
 
 class AirportViewSet(
     mixins.ListModelMixin,
@@ -57,10 +62,16 @@ class AirportViewSet(
     serializer_class = airport_serializers.AirportSerializer
     permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
+    def get_serializer_class(self):
+        if self.action == "list":
+            return airport_serializers.AirportListSerializer
+        return self.serializer_class
+
 
 class RouteViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
     GenericViewSet
 ):
     queryset = Route.objects.select_related()
@@ -70,6 +81,10 @@ class RouteViewSet(
     def get_serializer_class(self):
         if self.action == "list":
             return route_serializers.RouteListSerializer
+
+        if self.action == "retrieve":
+            return route_serializers.RouteDetailSerializer
+
         return self.serializer_class
 
 

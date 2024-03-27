@@ -8,3 +8,9 @@ class AirportSerializer(serializers.ModelSerializer):
     class Meta:
         model = Airport
         fields = ("name", "closest_big_city",)
+
+
+class AirportListSerializer(AirportSerializer):
+    closest_big_city = serializers.SlugRelatedField(
+        slug_field="name", read_only=True
+    )

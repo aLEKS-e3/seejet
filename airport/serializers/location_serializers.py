@@ -15,3 +15,9 @@ class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = "__all__"
+
+
+class CityListSerializer(CitySerializer):
+    country = serializers.SlugRelatedField(
+        slug_field="name", read_only=True
+    )

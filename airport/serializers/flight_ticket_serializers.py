@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 
 from airport.models import Flight, Ticket
 from airport.serializers.airplane_serializers import AirplaneListSerializer
+from airport.serializers.crew_serializers import CrewSerializer
 from airport.serializers.route_serializers import RouteListSerializer
 
 
@@ -15,8 +16,12 @@ class FlightSerializer(serializers.ModelSerializer):
 
 class FlightListSerializer(serializers.ModelSerializer):
     route = serializers.StringRelatedField(read_only=True)
-    airplane = serializers.StringRelatedField(read_only=True)
-    crew = serializers.StringRelatedField(many=True, read_only=True)
+    airplane = serializers.SlugRelatedField(
+        slug_field="name", read_only=True
+    )
+    crew = serializers.SlugRelatedField(
+        slug_field="full_name", many=True, read_only=True
+    )
     tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
@@ -56,10 +61,6 @@ class TicketSeatsSerializer(TicketSerializer):
         fields = ("row", "seat",)
 
 
-class TicketListSerializer(TicketSerializer):
-    flight = FlightListSerializer(read_only=True)
-
-
 class FlightDetailSerializer(FlightSerializer):
     route = RouteListSerializer(read_only=True)
     airplane = AirplaneListSerializer(read_only=True)
@@ -69,3 +70,7 @@ class FlightDetailSerializer(FlightSerializer):
     taken_places = TicketSeatsSerializer(
         source="tickets", many=True, read_only=True
     )
+
+
+class TicketListSerializer(TicketSerializer):
+    flight = FlightDetailSerializer(read_only=True)
