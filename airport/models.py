@@ -11,6 +11,7 @@ class Country(models.Model):
     name = models.CharField(max_length=255)
 
     class Meta:
+        ordering = ["name"]
         verbose_name_plural = "countries"
 
     def __str__(self):
@@ -26,6 +27,7 @@ class City(models.Model):
     )
 
     class Meta:
+        ordering = ["name"]
         verbose_name_plural = "cities"
 
     def __str__(self):
@@ -39,6 +41,9 @@ class Airport(models.Model):
         on_delete=models.CASCADE,
         related_name="airports"
     )
+
+    class Meta:
+        ordering = ["name"]
 
     def __str__(self):
         return self.name
@@ -57,6 +62,10 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
+    class Meta:
+        ordering = ["source", "destination"]
+        unique_together = ["source", "destination"]
+
     def __str__(self):
         return f"{self.source} --> {self.destination}"
 
@@ -69,12 +78,19 @@ class Order(models.Model):
         related_name="orders"
     )
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return f"Order by {self.user} on {self.created_at}"
 
 
 class AirplaneType(models.Model):
     name = models.CharField(max_length=255)
+
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "airplane-type"
 
     def __str__(self):
         return self.name
@@ -89,6 +105,9 @@ class Airplane(models.Model):
         on_delete=models.CASCADE,
         related_name="airplanes"
     )
+
+    class Meta:
+        ordering = ["name"]
 
     @property
     def total_seats(self):
@@ -110,6 +129,9 @@ class Crew(models.Model):
     last_name = models.CharField(max_length=255)
     portrait = models.ImageField(null=True, upload_to=crew_image_path)
 
+    class Meta:
+        ordering = ["first_name", "last_name"]
+
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
@@ -126,6 +148,7 @@ class Flight(models.Model):
     crew = models.ManyToManyField(Crew)
 
     class Meta:
+        ordering = ["departure_time", "arrival_time"]
         default_related_name = "flights"
 
     def __str__(self):
@@ -142,8 +165,8 @@ class Ticket(models.Model):
 
     class Meta:
         default_related_name = "tickets"
-        ordering = ("row", "seat",)
-        unique_together = ("row", "seat", "flight",)
+        ordering = ["row", "seat"]
+        unique_together = ["row", "seat", "flight"]
 
     @staticmethod
     def validate_ticket(row, seat, airplane, error):
