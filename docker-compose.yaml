@@ -13,8 +13,8 @@ services:
               python manage.py migrate &&
                 python manage.py wait_for_db &&
                   python manage.py runserver 0.0.0.0:8000"
-    env_file:
-      - .env
+    environment:
+      - DJANGO_SECRET_KEY
     depends_on:
       - db
 
@@ -23,8 +23,13 @@ services:
     restart: always
     ports:
       - "5433:5432"
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_DB
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES
+      - POSTGRES_HOST
+      - POSTGRES_PORT
     volumes:
       - postgres_db:$PGDATA
 
