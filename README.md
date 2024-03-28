@@ -62,7 +62,7 @@ python manage.py loaddata airport_data.json
 ```
 
 Create your own user via ```api/user/register/``` or use the one I've created for you:
-- **Login:** jet_man
+- **Login:** jet_man@airport.com
 - **Password:** 123_win_jet
 
 **NOTE:** Access to all resources is provided via JWT. To get one go to ```api/user/token/```.
