@@ -66,7 +66,9 @@ Create your own user via ```api/user/register/``` or use the one I've created fo
 - **Password:** 123_win_jet
 
 **NOTE:** Access to all resources is provided via JWT. To get one go to ```api/user/token/```.
-**NOTE2:** To find all accessible endpoint go to ```api/doc/swagger/```.
+
+**P.S.:** To find all accessible endpoint go to ```api/doc/swagger/```.
+
 ---
 
 ## License
