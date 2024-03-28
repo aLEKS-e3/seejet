@@ -30,6 +30,7 @@ services:
       - POSTGRES
       - POSTGRES_HOST
       - POSTGRES_PORT
+      - PGDATA
     volumes:
       - postgres_db:$PGDATA
 
