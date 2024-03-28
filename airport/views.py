@@ -138,12 +138,14 @@ class CrewViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.select_related().prefetch_related(
-        "crew"
-    ).annotate(
-        tickets_available=(
-            F("airplane__rows") * F("airplane__seats_in_row")
-            - Count("tickets")
+    queryset = (
+        Flight.objects.select_related()
+        .prefetch_related("crew")
+        .annotate(
+            tickets_available=(
+                F("airplane__rows") * F("airplane__seats_in_row")
+                - Count("tickets")
+            )
         )
     )
     serializer_class = flight_ticket_serializers.FlightSerializer
