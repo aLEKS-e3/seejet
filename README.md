@@ -36,6 +36,7 @@ venv/Scripts/actiavte # for windows
 ```shell
 pip install -r requirements.txt
 ```
+
 4. Apply all the migrations and explore!
 ```shell
 python manage.py migrate
@@ -51,6 +52,10 @@ docker pull chebuster/airport-tracker-api
 docker-compose build
 docker-compose up
 ```
+
+---
+
+**!** Don't forget to copy `.env.sample` as `.env`
 
 ---
 
