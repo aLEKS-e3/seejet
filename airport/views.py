@@ -2,7 +2,6 @@ from django.db.models import F, Count
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
@@ -18,7 +17,7 @@ from airport.models import (
     Flight,
     Order
 )
-from airport.permissions import IsAdminOrIfAuthenticatedReadOnly
+from airport.pagination import OrderPagination
 from airport.serializers import location_serializers
 from airport.serializers import airplane_serializers
 from airport.serializers import flight_ticket_serializers
@@ -35,7 +34,6 @@ class CountryViewSet(
 ):
     queryset = Country.objects.all()
     serializer_class = location_serializers.CountrySerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
 class CityViewSet(
@@ -45,11 +43,11 @@ class CityViewSet(
 ):
     queryset = City.objects.select_related("country")
     serializer_class = location_serializers.CitySerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
             return location_serializers.CityListSerializer
+
         return self.serializer_class
 
 
@@ -60,11 +58,11 @@ class AirportViewSet(
 ):
     queryset = Airport.objects.select_related("closest_big_city")
     serializer_class = airport_serializers.AirportSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
             return airport_serializers.AirportListSerializer
+
         return self.serializer_class
 
 
@@ -76,7 +74,6 @@ class RouteViewSet(
 ):
     queryset = Route.objects.select_related()
     serializer_class = route_serializers.RouteSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -95,28 +92,27 @@ class AirplaneTypeViewSet(
 ):
     queryset = AirplaneType.objects.all()
     serializer_class = airplane_serializers.AirplaneTypeSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.select_related("type")
     serializer_class = airplane_serializers.AirplaneSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
             return airplane_serializers.AirplaneListSerializer
+
         return self.serializer_class
 
 
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = crew_serializers.CrewSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "upload_image":
             return crew_serializers.CrewImageSerializer
+
         return self.serializer_class
 
     @action(
@@ -149,7 +145,6 @@ class FlightViewSet(viewsets.ModelViewSet):
         )
     )
     serializer_class = flight_ticket_serializers.FlightSerializer
-    permission_classes = [IsAdminOrIfAuthenticatedReadOnly]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -205,11 +200,6 @@ class FlightViewSet(viewsets.ModelViewSet):
         return super().list(request, *args, **kwargs)
 
 
-class OrderPagination(PageNumberPagination):
-    page_size = 10
-    max_page_size = 100
-
-
 class OrderViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
@@ -240,6 +230,7 @@ class OrderViewSet(
     def get_serializer_class(self):
         if self.action == "retrieve":
             return order_serializers.OrderDetailSerializer
+
         return self.serializer_class
 
     def perform_create(self, serializer):

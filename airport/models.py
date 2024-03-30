@@ -64,7 +64,12 @@ class Route(models.Model):
 
     class Meta:
         ordering = ["source", "destination"]
-        unique_together = ["source", "destination"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["source", "destination"],
+                name="unique flight route"
+            )
+        ]
 
     def __str__(self):
         return f"{self.source} --> {self.destination}"
@@ -141,15 +146,22 @@ class Crew(models.Model):
 
 
 class Flight(models.Model):
-    route = models.ForeignKey(Route, on_delete=models.CASCADE)
-    airplane = models.ForeignKey(Airplane, on_delete=models.CASCADE)
+    route = models.ForeignKey(
+        Route,
+        on_delete=models.CASCADE,
+        related_name="flights"
+    )
+    airplane = models.ForeignKey(
+        Airplane,
+        on_delete=models.CASCADE,
+        related_name="flights"
+    )
     departure_time = models.DateTimeField()
     arrival_time = models.DateTimeField()
-    crew = models.ManyToManyField(Crew)
+    crew = models.ManyToManyField(Crew, related_name="flights")
 
     class Meta:
         ordering = ["departure_time", "arrival_time"]
-        default_related_name = "flights"
 
     def __str__(self):
         return (f"{self.route} "
@@ -160,13 +172,25 @@ class Flight(models.Model):
 class Ticket(models.Model):
     row = models.IntegerField()
     seat = models.IntegerField()
-    flight = models.ForeignKey(Flight, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    flight = models.ForeignKey(
+        Flight,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
+    order = models.ForeignKey(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
 
     class Meta:
-        default_related_name = "tickets"
         ordering = ["row", "seat"]
-        unique_together = ["row", "seat", "flight"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["row", "seat", "flight"],
+                name="unique flight ticket"
+            )
+        ]
 
     @staticmethod
     def validate_ticket(row, seat, airplane, error):
