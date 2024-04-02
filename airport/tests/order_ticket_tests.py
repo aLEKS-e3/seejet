@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
 from django.urls import reverse
 from rest_framework import status
 from django.core.exceptions import ValidationError
@@ -111,7 +110,7 @@ class AuthorizedOrderApiTests(APITestCase):
                 }
             ]
         }
-        with self.assertRaises(IntegrityError):
+        with self.assertRaises(ValidationError):
             serializer = OrderSerializer(data=tickets_data)
             serializer.is_valid(raise_exception=True)
             self.client.post(ORDER_URL, serializer.data, format="json")
