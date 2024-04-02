@@ -1,8 +1,7 @@
-from django.core.exceptions import ValidationError
 from django.db import transaction
 from rest_framework import serializers
 
-from airport.models import Order, Ticket, Flight
+from airport.models import Order, Ticket
 from airport.serializers.flight_ticket_serializers import (
     TicketListSerializer,
     TicketSerializer
